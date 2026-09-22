@@ -48,7 +48,12 @@ void Lexer::ignorarEspacios()
 Token Lexer::reconocerNumero()
 {
     string lexema = "";
+
+    int lineaInicio = linea;
+    int columnaInicio = columna;
+
     bool tienePunto = false;
+
     while (!esFinal())
     {
         if (isdigit(actual()))
@@ -70,21 +75,27 @@ Token Lexer::reconocerNumero()
     {
         return {
             TipoToken::LITERAL_REAL,
-            lexema};
+            lexema,
+            lineaInicio,
+            columnaInicio};
     }
-    else
-    {
-        return {
-            TipoToken::LITERAL_ENTERO,
-            lexema};
-    }
+
+    return {
+        TipoToken::LITERAL_ENTERO,
+        lexema,
+        lineaInicio,
+        columnaInicio};
 }
 
 Token Lexer::reconocerIdentificador()
 {
     string lexema = "";
 
-    while (!esFinal() && (isalnum(actual()) || actual() == '_'))
+    int lineaInicio = linea;
+    int columnaInicio = columna;
+
+    while (!esFinal() &&
+           (isalnum(actual()) || actual() == '_'))
     {
         lexema += avanzar();
     }
@@ -93,21 +104,32 @@ Token Lexer::reconocerIdentificador()
     {
         return {
             TipoToken::PALABRA_CLAVE,
-            lexema};
+            lexema,
+            lineaInicio,
+            columnaInicio};
     }
 
     return {
         TipoToken::IDENTIFICADOR,
-        lexema};
+        lexema,
+        lineaInicio,
+        columnaInicio};
 }
 
 Token Lexer::reconocerOperador()
 {
     string lexema = "";
+
+    int lineaInicio = linea;
+    int columnaInicio = columna;
+
     lexema += avanzar();
+
     return {
         TipoToken::OPERADOR,
-        lexema};
+        lexema,
+        lineaInicio,
+        columnaInicio};
 }
 
 bool Lexer::esPalabraClave(string palabra)
@@ -164,18 +186,45 @@ vector<Token> Lexer::analizar()
         // Asignación
         else if (c == '=')
         {
+            int lineaInicio = linea;
+            int columnaInicio = columna;
+
             string lexema = "";
             lexema += avanzar();
-            tokens.push_back({TipoToken::ASIGNACION, lexema});
+
+            tokens.push_back({TipoToken::ASIGNACION,
+                              lexema,
+                              lineaInicio,
+                              columnaInicio});
         }
 
         // Delimitador
-        else if (c == ';')
+        else if (c == '=')
         {
+            int lineaInicio = linea;
+            int columnaInicio = columna;
+
             string lexema = "";
             lexema += avanzar();
+
+            tokens.push_back({TipoToken::ASIGNACION,
+                              lexema,
+                              lineaInicio,
+                              columnaInicio});
+        }
+
+        else if (c == ';')
+        {
+            int lineaInicio = linea;
+            int columnaInicio = columna;
+
+            string lexema = "";
+            lexema += avanzar();
+
             tokens.push_back({TipoToken::DELIMITADOR,
-                              lexema});
+                              lexema,
+                              lineaInicio,
+                              columnaInicio});
         }
 
         // Carácter desconocido - error lexico
@@ -187,12 +236,7 @@ vector<Token> Lexer::analizar()
             string lexema = "";
             lexema += avanzar();
 
-            registrarError(
-                lexema,
-                lineaError,
-                columnaError,
-                "Caracter no reconocido");
-
+            registrarError(lexema, lineaError, columnaError, "Caracter no reconocido");
             tokens.push_back({TipoToken::DESCONOCIDO,
                               lexema,
                               lineaError,

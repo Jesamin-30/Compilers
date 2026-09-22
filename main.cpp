@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "Lexer.h"
+#include "Parser.h"
 
 using namespace std;
 
@@ -71,6 +72,27 @@ int main()
             cout << "Mensaje: " << error.mensaje << endl;
             cout << "----------------------" << endl;
         }
+    }
+
+    cout << "\n===============================" << endl;
+    cout << "     ANALISIS SINTACTICO" << endl;
+    cout << "===============================" << endl;
+
+    Parser parser(tokens);
+
+    if (parser.analizar())
+    {
+
+        cout << "\nResultado: "
+             << "Instruccion sintacticamente correcta."
+             << endl;
+    }
+    else
+    {
+
+        cout << "\nResultado: "
+             << "Instruccion sintacticamente incorrecta."
+             << endl;
     }
 
     return 0;

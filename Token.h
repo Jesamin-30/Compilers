@@ -1,3 +1,8 @@
+#ifndef TOKEN_H
+#define TOKEN_H
+
+#include <string>
+
 using namespace std;
 
 enum class TipoToken
@@ -6,17 +11,17 @@ enum class TipoToken
     LITERAL_REAL,
     IDENTIFICADOR,
     DESCONOCIDO,
-    //-------
-    PALABRA_CLAVE,
-    OPERADOR,
-    ASIGNACION,
-    DELIMITADOR
+
+    PALABRA_CLAVE, // int, float, string
+    OPERADOR,      // +, -, *, /
+    ASIGNACION,    // =
+    DELIMITADOR    // ;
 };
 
 struct Token
 {
-    TipoToken tipo; 
-    string lexema; 
+    TipoToken tipo;
+    string lexema;
 
     int linea;
     int columna;
@@ -25,7 +30,11 @@ struct Token
 struct ErrorLexico
 {
     string lexema;
+
     int linea;
     int columna;
+
     string mensaje;
 };
+
+#endif
